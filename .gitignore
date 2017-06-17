@@ -30,6 +30,7 @@ hs_err_pid*
 
 # IntelliJ
 /.idea/libraries/
+/.idea/dictionaries/
 
 # MCP-related stuff
 /mcp/
