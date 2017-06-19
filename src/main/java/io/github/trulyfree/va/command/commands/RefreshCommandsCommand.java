@@ -19,7 +19,6 @@ public class RefreshCommandsCommand extends TabbableCommand {
 
     @Override
     public void execute(CommandSender commandSender, String[] strings) {
-        adjuster.getPlugin().getLogger().info(Arrays.toString(strings));
         if (commandSender.equals(adjuster.getPlugin().getProxy().getConsole())) {
             try {
                 adjuster.refreshCustomCommands();
