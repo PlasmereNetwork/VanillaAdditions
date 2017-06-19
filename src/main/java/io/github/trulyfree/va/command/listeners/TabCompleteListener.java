@@ -23,7 +23,7 @@ public class TabCompleteListener implements Listener {
         this.awaitingSuggestions = new ConcurrentHashMap<>();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onTabComplete(TabCompleteEvent event) {
         String cursor = event.getCursor();
         if (cursor.startsWith("/")) {
@@ -60,7 +60,7 @@ public class TabCompleteListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onTabCompleteResponse(TabCompleteResponseEvent event) {
         if (event.getSuggestions().isEmpty()) {
             return;
