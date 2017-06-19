@@ -16,14 +16,13 @@ public class DaemonJoinListener implements Listener {
     @Setter
     private ConnectionCheck daemonConnectionCheck;
 
-    public DaemonJoinListener(DaemonAdjuster adjuster) {
+    DaemonJoinListener(DaemonAdjuster adjuster) {
         this.adjuster = adjuster;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPreLoginEvent(PreLoginEvent event) {
         if (daemonConnectionCheck.validate(event.getConnection())) {
-            adjuster.getPlugin().getLogger().info("Attempting to log in daemon " + event.getConnection().getName());
             event.getConnection().setOnlineMode(false);
         }
     }
@@ -32,6 +31,7 @@ public class DaemonJoinListener implements Listener {
     public void onPostLoginEvent(PostLoginEvent event) {
         if (daemonConnectionCheck.validate(event.getPlayer().getPendingConnection())) {
             Daemon.makeInstance(event.getPlayer());
+            adjuster.getPlugin().getLogger().info("Daemon instance assigned to " + event.getPlayer().getName());
         }
     }
 
