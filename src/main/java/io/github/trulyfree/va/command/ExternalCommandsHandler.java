@@ -43,7 +43,7 @@ class ExternalCommandsHandler {
         Enumeration<JarEntry> enumeration = jarFile.entries();
 
         URL[] urls = {new URL("jar:file:" + file.getAbsolutePath() + "!/")};
-        URLClassLoader cl = URLClassLoader.newInstance(urls);
+        URLClassLoader cl = URLClassLoader.newInstance(urls, this.getClass().getClassLoader());
 
         while (enumeration.hasMoreElements()) {
             try {
