@@ -52,14 +52,14 @@ public class TabCompleteListener implements Listener {
             if (firstSpace == -1) {
                 List<String> awaitingSuggestionResponses = new ArrayList<>();
                 String commandStringStart = cursor.substring(1);
-                for (Command command : commandMap.values()) {
-                    if (ProxyServer.getInstance().getDisabledCommands().contains(command.getName())) {
+                for (Map.Entry<String, Command> entry : commandMap.entrySet()) {
+                    if (ProxyServer.getInstance().getDisabledCommands().contains(entry.getKey())) {
                         continue;
                     }
-                    if (command.getName().startsWith(commandStringStart)) {
-                        awaitingSuggestionResponses.add("/" + command.getName());
+                    if (entry.getValue().getName().startsWith(commandStringStart)) {
+                        awaitingSuggestionResponses.add("/" + entry.getName());
                     }
-                    for (String alias : command.getAliases()) {
+                    for (String alias : entry.getValue().getAliases()) {
                         if (alias.startsWith(commandStringStart)) {
                             awaitingSuggestionResponses.add("/" + alias);
                         }
