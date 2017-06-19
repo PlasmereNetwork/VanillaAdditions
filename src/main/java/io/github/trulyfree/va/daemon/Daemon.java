@@ -17,12 +17,17 @@ public final class Daemon {
     private final ProxiedPlayer player;
     private final ExecutorService commandHandler;
 
-    
+
     Daemon(ProxiedPlayer player) {
         this.player = player;
         this.commandHandler = Executors.newSingleThreadExecutor();
         instance.set(this);
         latch.countDown();
+    }
+
+    public static Daemon getInstance() throws InterruptedException {
+        latch.await();
+        return instance.get();
     }
 
     public void submitCommands(List<String> commands) {
@@ -37,9 +42,4 @@ public final class Daemon {
         });
     }
 
-    public static Daemon getInstance() throws InterruptedException {
-        latch.await();
-        return instance.get();
-    }
-    
 }

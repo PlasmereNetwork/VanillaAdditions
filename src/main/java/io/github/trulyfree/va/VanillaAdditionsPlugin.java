@@ -8,10 +8,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public class VanillaAdditionsPlugin extends Plugin {
 
-    private CommandAdjuster commandAdjuster;
-    private DaemonAdjuster daemonAdjuster;
     @Getter
     private final ConfigHandler configHandler;
+    private CommandAdjuster commandAdjuster;
+    private DaemonAdjuster daemonAdjuster;
 
     public VanillaAdditionsPlugin() {
         this.configHandler = new ConfigHandler(this);
