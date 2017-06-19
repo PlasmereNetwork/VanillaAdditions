@@ -1,0 +1,40 @@
+ip_forward: false
+network_compression_threshold: 256
+stats: 433eb12a-5cf1-42e0-a1c0-1286e031f590
+permissions:
+  default: null
+groups:
+  <daemon name>:
+  - daemon
+servers:
+  lobby:
+    motd: '<server MOTD>'
+    address: localhost:25566
+    restricted: false
+timeout: 30000
+listeners:
+- query_port: 25565
+  motd: '<server MOTD>'
+  bind_local_address: false
+  tab_list: SERVER
+  query_enabled: true
+  host: 0.0.0.0:25565
+  max_players: 20
+  tab_size: 60
+  ping_passthrough: true
+  force_default_server: true
+  priorities:
+  - lobby
+  forced_hosts:
+    localhost: lobby
+prevent_proxy_connections: false
+player_limit: 20
+online_mode: true
+log_commands: true
+disabled_commands:
+- bungee
+- greload
+- ip
+- perms
+- end
+connection_throttle: 4000

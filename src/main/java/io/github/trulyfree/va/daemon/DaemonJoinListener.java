@@ -22,6 +22,9 @@ public class DaemonJoinListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPreLoginEvent(PreLoginEvent event) {
+        if (daemonConnectionCheck == null) {
+            return;
+        }
         if (daemonConnectionCheck.validate(event.getConnection())) {
             event.getConnection().setOnlineMode(false);
         }
@@ -29,6 +32,9 @@ public class DaemonJoinListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPostLoginEvent(PostLoginEvent event) {
+        if (daemonConnectionCheck == null) {
+            return;
+        }
         if (daemonConnectionCheck.validate(event.getPlayer().getPendingConnection())) {
             Daemon.makeInstance(event.getPlayer());
             adjuster.getPlugin().getLogger().info("Daemon instance assigned to " + event.getPlayer().getName());
