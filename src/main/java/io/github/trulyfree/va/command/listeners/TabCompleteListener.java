@@ -57,7 +57,7 @@ public class TabCompleteListener implements Listener {
                         continue;
                     }
                     if (entry.getValue().getName().startsWith(commandStringStart)) {
-                        awaitingSuggestionResponses.add("/" + entry.getName());
+                        awaitingSuggestionResponses.add("/" + entry.getValue().getName());
                     }
                     for (String alias : entry.getValue().getAliases()) {
                         if (alias.startsWith(commandStringStart)) {
