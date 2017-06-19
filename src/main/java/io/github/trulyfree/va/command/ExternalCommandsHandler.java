@@ -34,6 +34,7 @@ class ExternalCommandsHandler {
 
     private List<Class<? extends TabbableCommand>> getClasses(File file) throws IOException {
         if (!file.exists()) {
+            commandAdjuster.getPlugin().getLogger().warning("External commands jar did not exist! (should be in plugin folder as 'commands.jar')");
             return Collections.emptyList();
         }
 

@@ -5,6 +5,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 public class RefreshCommandsCommand extends TabbableCommand {
@@ -20,7 +21,11 @@ public class RefreshCommandsCommand extends TabbableCommand {
     public void execute(CommandSender commandSender, String[] strings) {
         adjuster.getPlugin().getLogger().info(Arrays.toString(strings));
         if (commandSender.equals(adjuster.getPlugin().getProxy().getConsole())) {
-            adjuster.refreshCustomCommands();
+            try {
+                adjuster.refreshCustomCommands();
+            } catch (IllegalAccessException | IOException | InstantiationException e) {
+                e.printStackTrace();
+            }
         } else {
             commandSender.sendMessage(new ComponentBuilder("").color(ChatColor.RED).append("Unknown command. Try /help for a list of commands").create());
         }
