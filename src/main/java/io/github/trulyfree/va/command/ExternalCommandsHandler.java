@@ -24,21 +24,27 @@ class ExternalCommandsHandler {
     }
 
     private List<TabbableCommand> getExternalCommands(File file) throws IOException, IllegalAccessException, InstantiationException {
-        List<Class<? extends TabbableCommand>> commandClasses = getClasses(file);
+        List<Class<?>> commandClasses = getClasses(file);
         List<TabbableCommand> commands = new ArrayList<>();
-        for (Class<? extends TabbableCommand> clazz : commandClasses) {
-            commands.add(clazz.newInstance());
+        for (Class<?> clazz : commandClasses) {
+            try {
+                Object instance = clazz.newInstance();
+                if (instance instanceof TabbableCommand) {
+                    commands.add((TabbableCommand) instance);
+                }
+            } catch (IllegalAccessException | InstantiationException ignored) {
+            }
         }
         return Collections.unmodifiableList(commands);
     }
 
-    private List<Class<? extends TabbableCommand>> getClasses(File file) throws IOException {
+    private List<Class<?>> getClasses(File file) throws IOException {
         if (!file.exists()) {
             commandAdjuster.getPlugin().getLogger().warning("External commands jar did not exist! (should be in plugin folder as 'commands.jar')");
             return Collections.emptyList();
         }
 
-        List<Class<? extends TabbableCommand>> list = new ArrayList<>();
+        List<Class<?>> list = new ArrayList<>();
         JarFile jarFile = new JarFile(file.getAbsolutePath());
         Enumeration<JarEntry> enumeration = jarFile.entries();
 
@@ -54,9 +60,7 @@ class ExternalCommandsHandler {
                 String className = je.getName().substring(0, je.getName().length() - 6);
                 className = className.replace('/', '.');
                 Class<?> c = cl.loadClass(className);
-                if (c.isAssignableFrom(TabbableCommand.class)) {
-                    list.add(c.asSubclass(TabbableCommand.class));
-                }
+                list.add(c);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
