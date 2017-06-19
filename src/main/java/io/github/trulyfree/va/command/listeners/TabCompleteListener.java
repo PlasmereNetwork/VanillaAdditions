@@ -2,6 +2,7 @@ package io.github.trulyfree.va.command.listeners;
 
 import io.github.trulyfree.va.command.CommandAdjuster;
 import io.github.trulyfree.va.command.commands.TabbableCommand;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.event.TabCompleteResponseEvent;
@@ -52,6 +53,9 @@ public class TabCompleteListener implements Listener {
                 List<String> awaitingSuggestionResponses = new ArrayList<>();
                 String commandStringStart = cursor.substring(1);
                 for (Command command : commandMap.values()) {
+                    if (ProxyServer.getInstance().getDisabledCommands().contains(command.getName())) {
+                        continue;
+                    }
                     if (command.getName().startsWith(commandStringStart)) {
                         awaitingSuggestionResponses.add("/" + command.getName());
                     }
