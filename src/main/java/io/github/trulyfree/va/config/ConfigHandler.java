@@ -25,7 +25,7 @@ public class ConfigHandler {
         return getConfig(new File(plugin.getDataFolder(), configName), type);
     }
 
-    public <T> T getConfig(File file, Class<T> type) throws IOException {
+    private <T> T getConfig(File file, Class<T> type) throws IOException {
         T temp = null;
         if (file.exists()) {
             StringBuilder builder = new StringBuilder();
@@ -36,14 +36,6 @@ public class ConfigHandler {
             temp = gson.fromJson(builder.toString(), type);
         }
         return temp;
-    }
-
-    public void saveConfig(String configName, Object toSave) throws IOException {
-        saveConfig(new File(plugin.getDataFolder(), configName), toSave);
-    }
-
-    public void saveConfig(File file, Object toSave) throws IOException {
-        Files.write(gson.toJson(toSave).getBytes(Charsets.UTF_8), file);
     }
 
 }

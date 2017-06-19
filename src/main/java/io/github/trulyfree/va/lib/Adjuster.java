@@ -2,10 +2,11 @@ package io.github.trulyfree.va.lib;
 
 import io.github.trulyfree.va.VanillaAdditionsPlugin;
 
+@SuppressWarnings("unused")
 public interface Adjuster {
-    public void applyAdjustments();
+    void applyAdjustments();
 
-    public void removeAdjustments();
+    void removeAdjustments();
 
-    public VanillaAdditionsPlugin getPlugin();
+    VanillaAdditionsPlugin getPlugin();
 }

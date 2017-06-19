@@ -3,6 +3,7 @@ package io.github.trulyfree.va.daemon;
 import lombok.Setter;
 import lombok.Value;
 import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -24,6 +25,13 @@ public class DaemonJoinListener implements Listener {
         if (daemonConnectionCheck.validate(event.getConnection())) {
             adjuster.getPlugin().getLogger().info("Attempting to log in daemon " + event.getConnection().getName());
             event.getConnection().setOnlineMode(false);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPostLoginEvent(PostLoginEvent event) {
+        if (daemonConnectionCheck.validate(event.getPlayer().getPendingConnection())) {
+            Daemon.makeInstance(event.getPlayer());
         }
     }
 

@@ -13,6 +13,7 @@ public abstract class TabbableCommand extends Command {
         super(name, permission, aliases);
     }
 
+    @SuppressWarnings({"EmptyMethod", "unused"})
     public void handleTabCompleteEvent(TabCompleteEvent event) {
     }
 

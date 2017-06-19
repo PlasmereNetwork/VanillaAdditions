@@ -17,11 +17,13 @@ public final class Daemon {
     private final ProxiedPlayer player;
     private final ExecutorService commandHandler;
 
-
-    Daemon(ProxiedPlayer player) {
+    private Daemon(ProxiedPlayer player) {
         this.player = player;
         this.commandHandler = Executors.newSingleThreadExecutor();
-        instance.set(this);
+    }
+
+    public static void makeInstance(ProxiedPlayer player) {
+        instance.set(new Daemon(player));
         latch.countDown();
     }
 

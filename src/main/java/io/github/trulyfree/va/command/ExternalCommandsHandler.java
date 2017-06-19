@@ -15,7 +15,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 @RequiredArgsConstructor
-public class ExternalCommandsHandler {
+class ExternalCommandsHandler {
 
     private final CommandAdjuster commandAdjuster;
 
@@ -23,7 +23,7 @@ public class ExternalCommandsHandler {
         return getExternalCommands(new File(commandAdjuster.getPlugin().getDataFolder(), "commands.jar"));
     }
 
-    public List<TabbableCommand> getExternalCommands(File file) throws IOException, IllegalAccessException, InstantiationException {
+    private List<TabbableCommand> getExternalCommands(File file) throws IOException, IllegalAccessException, InstantiationException {
         List<Class<? extends TabbableCommand>> commandClasses = getClasses(file);
         List<TabbableCommand> commands = new ArrayList<>();
         for (Class<? extends TabbableCommand> clazz : commandClasses) {
@@ -32,7 +32,7 @@ public class ExternalCommandsHandler {
         return Collections.unmodifiableList(commands);
     }
 
-    public List<Class<? extends TabbableCommand>> getClasses(File file) throws IOException {
+    private List<Class<? extends TabbableCommand>> getClasses(File file) throws IOException {
         if (!file.exists()) {
             return Collections.emptyList();
         }
