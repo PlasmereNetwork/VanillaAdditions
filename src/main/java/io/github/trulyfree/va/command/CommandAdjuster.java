@@ -57,6 +57,7 @@ public class CommandAdjuster implements Adjuster {
         plugin.getProxy().getPluginManager().unregisterCommands(plugin);
         plugin.getProxy().getPluginManager().registerCommand(plugin, new RefreshCommandsCommand(this));
         for (TabbableCommand command : handler.getExternalCommands()) {
+            plugin.getLogger().info("Registered command " + command.getName());
             addedCommands.add(command);
             plugin.getProxy().getPluginManager().registerCommand(plugin, command);
         }
