@@ -1,6 +1,5 @@
 ip_forward: false
 network_compression_threshold: 256
-stats: 433eb12a-5cf1-42e0-a1c0-1286e031f590
 permissions:
   default: null
 groups:
