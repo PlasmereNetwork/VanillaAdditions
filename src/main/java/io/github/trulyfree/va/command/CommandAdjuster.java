@@ -1,16 +1,13 @@
 package io.github.trulyfree.va.command;
 
 import io.github.trulyfree.va.VanillaAdditionsPlugin;
-import io.github.trulyfree.va.command.commands.CommandList;
 import io.github.trulyfree.va.command.commands.RefreshCommandsCommand;
 import io.github.trulyfree.va.command.commands.TabbableCommand;
 import io.github.trulyfree.va.command.listeners.TabCompleteListener;
 import io.github.trulyfree.va.lib.Adjuster;
 import lombok.Getter;
-import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
