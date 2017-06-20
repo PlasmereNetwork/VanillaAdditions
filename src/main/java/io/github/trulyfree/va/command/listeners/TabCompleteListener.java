@@ -20,10 +20,31 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TabCompleteListener implements Listener {
 
+    /**
+     * The adjuster which owns this listener. This is not necessary to have, but may prove useful to have in future
+     * versions.
+     */
+    @SuppressWarnings("unused")
     private final CommandAdjuster adjuster;
+
+    /**
+     * The suggestions that we need to add to the connections upon tab complete response. This allows us to add vanilla
+     * stuff without touching the server.
+     */
     private final ConcurrentHashMap<Connection, List<String>> awaitingSuggestions;
+
+    /**
+     * A reference to the proxy's command map. This is reflectively captured from ProxyConfig, and is bound to change
+     * between BungeeCord versions.
+     */
     private final Map<String, Command> commandMap;
 
+    /**
+     * Standard constructor for TabCompleteListener. Note that the proxy config's command map will be reflectively
+     * accessed within this method - report any stack traces with your bungeecord version.
+     *
+     * @param adjuster The adjuster which owns this listener.
+     */
     @SuppressWarnings("unchecked")
     public TabCompleteListener(CommandAdjuster adjuster) {
         this.adjuster = adjuster;

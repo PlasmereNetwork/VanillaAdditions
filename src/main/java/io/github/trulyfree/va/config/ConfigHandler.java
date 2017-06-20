@@ -11,20 +11,50 @@ import java.io.IOException;
 
 public class ConfigHandler {
 
+    /**
+     * The Gson instance used by this config handler.
+     */
     @Getter
     private final Gson gson;
+
+    /**
+     * The plugin which owns this config handler.
+     */
     @Getter
     private final VanillaAdditionsPlugin plugin;
 
+    /**
+     * Standard constructor for ConfigHandler.
+     *
+     * @param plugin The plugin which owns this config handler.
+     */
     public ConfigHandler(VanillaAdditionsPlugin plugin) {
         this.plugin = plugin;
         this.gson = new Gson();
     }
 
+    /**
+     * Returns a config instantiated as the specified type.
+     *
+     * @param configName The name of the config to look for in the data folder.
+     * @param type       The type to instantiate the config as.
+     * @param <T>        The type to instantiate the config as (for generic system).
+     * @return config The instantiated config, or null if the config does not exist.
+     * @throws IOException If the file cannot be read.
+     */
     public <T> T getConfig(String configName, Class<T> type) throws IOException {
         return getConfig(new File(plugin.getDataFolder(), configName), type);
     }
 
+    /**
+     * Returns a config instantiated as the specified type.
+     *
+     * @param file The file instance of the config file to read.
+     * @param type The type to instantiate the config as.
+     * @param <T>  The type to instantiate the config as (for generic system).
+     * @return config The instantiated config, or null if the config does not exist.
+     * @throws IOException If the file cannot be read.
+     */
     private <T> T getConfig(File file, Class<T> type) throws IOException {
         T temp = null;
         if (file.exists()) {

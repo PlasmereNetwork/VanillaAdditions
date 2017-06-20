@@ -6,13 +6,30 @@ import io.github.trulyfree.va.daemon.DaemonAdjuster;
 import lombok.Getter;
 import net.md_5.bungee.api.plugin.Plugin;
 
+/**
+ * Plugin class for VanillaAdditions.
+ */
 public class VanillaAdditionsPlugin extends Plugin {
 
+    /**
+     * The config handler for this VanillaAdditions instance.
+     */
     @Getter
     private final ConfigHandler configHandler;
+
+    /**
+     * The command adjuster for this VanillaAdditions instance.
+     */
     private CommandAdjuster commandAdjuster;
+
+    /**
+     * The daemon adjuster for this VanillaAdditions instance.
+     */
     private DaemonAdjuster daemonAdjuster;
 
+    /**
+     * Standard constructor for VanillaAdditions. This will be called when the plugin is loaded.
+     */
     public VanillaAdditionsPlugin() {
         this.configHandler = new ConfigHandler(this);
     }

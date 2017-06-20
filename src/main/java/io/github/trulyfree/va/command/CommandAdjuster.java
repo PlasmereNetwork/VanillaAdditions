@@ -4,34 +4,38 @@ import io.github.trulyfree.va.VanillaAdditionsPlugin;
 import io.github.trulyfree.va.command.listeners.TabCompleteListener;
 import io.github.trulyfree.va.lib.Adjuster;
 import lombok.Getter;
-import net.md_5.bungee.api.plugin.Listener;
-
-import java.util.Collections;
-import java.util.List;
 
 public class CommandAdjuster implements Adjuster {
 
+    /**
+     * The plugin which owns this adjuster.
+     */
     @Getter
     private final VanillaAdditionsPlugin plugin;
-    @Getter
-    private final List<Listener> addedListeners;
 
+    /**
+     * The TabCompleteListener owned by this adjuster.
+     */
+    @Getter
+    private final TabCompleteListener tabCompleteListener;
+
+    /**
+     * Standard constructor for CommandAdjuster.
+     *
+     * @param plugin The plugin which owns this adjuster.
+     */
     public CommandAdjuster(VanillaAdditionsPlugin plugin) {
         this.plugin = plugin;
-        this.addedListeners = Collections.<Listener>singletonList(new TabCompleteListener(this));
+        this.tabCompleteListener = new TabCompleteListener(this);
     }
 
     @Override
     public void applyAdjustments() {
-        for (Listener listener : addedListeners) {
-            plugin.getProxy().getPluginManager().registerListener(plugin, listener);
-        }
+        plugin.getProxy().getPluginManager().registerListener(plugin, tabCompleteListener);
     }
 
     @Override
     public void removeAdjustments() {
-        for (Listener listener : addedListeners) {
-            plugin.getProxy().getPluginManager().unregisterListener(listener);
-        }
+        plugin.getProxy().getPluginManager().unregisterListener(tabCompleteListener);
     }
 }
