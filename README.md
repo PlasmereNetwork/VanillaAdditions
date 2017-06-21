@@ -21,7 +21,7 @@ It's quite simple. The steps below assume that you're altering an existing
 simple vanilla installation.
 1. Download [the latest build of BungeeCord](https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar).
 2. Put it wherever you think it should go. Probably in its own folder.
-3. Run BungeeCord with `java -jar BungeeCord.jar`, then cancel it after it start up.
+3. Run BungeeCord with `java -jar BungeeCord.jar`, then cancel it after it starts up.
 4. It is highly suggested to use the configs under "BungeeCord Configs".
   - Make sure to replace the yml constants with what your setup needs.
 5. Download the VanillaAdditions plugin from the [releases tab](https://github.com/TrulyFree/VanillaAdditions/releases)
