@@ -1,5 +1,6 @@
 package io.github.trulyfree.va.daemon;
 
+import lombok.Getter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.Collections;
@@ -14,7 +15,7 @@ public final class Daemon {
     /**
      * Latch to ensure that we have an instance to use.
      */
-    private static final CountDownLatch latch = new CountDownLatch(1);
+    private static final AtomicReference<CountDownLatch> latch = new AtomicReference<>(new CountDownLatch(1));
 
     /**
      * The instance of the daemon. This is held in an atomic reference to ensure thread sanity.
@@ -24,6 +25,7 @@ public final class Daemon {
     /**
      * The player instance which will be used as the daemon.
      */
+    @Getter
     private final ProxiedPlayer player;
 
     /**
@@ -49,7 +51,7 @@ public final class Daemon {
      */
     public static void makeInstance(ProxiedPlayer player) {
         instance.set(new Daemon(player));
-        latch.countDown();
+        latch.get().countDown();
     }
 
     /**
@@ -59,8 +61,16 @@ public final class Daemon {
      * @throws InterruptedException If the thread waiting for the daemon is interrupted.
      */
     public static Daemon getInstance() throws InterruptedException {
-        latch.await();
+        latch.get().await();
         return instance.get();
+    }
+
+    public static boolean hasInstance() {
+        return latch.get().getCount() == 0;
+    }
+
+    public static void deleteInstance() {
+        latch.set(new CountDownLatch(1));
     }
 
     /**

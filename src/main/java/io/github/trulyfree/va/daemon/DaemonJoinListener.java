@@ -1,8 +1,10 @@
 package io.github.trulyfree.va.daemon;
 
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.Value;
 import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -50,6 +52,14 @@ public class DaemonJoinListener implements Listener {
         if (daemonConnectionCheck.validate(event.getPlayer().getPendingConnection())) {
             Daemon.makeInstance(event.getPlayer());
             adjuster.getPlugin().getLogger().info("Daemon instance assigned to " + event.getPlayer().getName());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    @SneakyThrows
+    public void onPlayerDisconnectEvent(PlayerDisconnectEvent event) {
+        if (Daemon.hasInstance() && event.getPlayer().equals(Daemon.getInstance().getPlayer())) {
+            Daemon.deleteInstance();
         }
     }
 
