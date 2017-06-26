@@ -3,8 +3,8 @@ package io.github.trulyfree.va.config;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
-import io.github.trulyfree.va.VanillaAdditionsPlugin;
 import lombok.Getter;
+import net.md_5.bungee.api.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,14 +21,14 @@ public class ConfigHandler {
      * The plugin which owns this config handler.
      */
     @Getter
-    private final VanillaAdditionsPlugin plugin;
+    private final Plugin plugin;
 
     /**
      * Standard constructor for ConfigHandler.
      *
      * @param plugin The plugin which owns this config handler.
      */
-    public ConfigHandler(VanillaAdditionsPlugin plugin) {
+    public ConfigHandler(Plugin plugin) {
         this.plugin = plugin;
         this.gson = new Gson();
     }
