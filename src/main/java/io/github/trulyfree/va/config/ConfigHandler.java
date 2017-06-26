@@ -7,7 +7,9 @@ import lombok.Getter;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public class ConfigHandler {
 
@@ -66,6 +68,31 @@ public class ConfigHandler {
             temp = gson.fromJson(builder.toString(), type);
         }
         return temp;
+    }
+
+    /**
+     * Save an object to a specific configuration file.
+     *
+     * @param configName The name of the config to look for in the data folder.
+     * @param obj The object to save.
+     * @throws IOException If the file cannot be saved.
+     */
+    @SuppressWarnings("unused")
+    public void saveConfig(String configName, Object obj) throws IOException {
+        saveConfig(new File(plugin.getDataFolder(), configName), obj);
+    }
+
+    /**
+     * Save an object to a specific configuration file.
+     *
+     * @param file The file instance of the config file to write to.
+     * @param obj The object to save.
+     * @throws IOException If the file cannot be saved.
+     */
+    private void saveConfig(File file, Object obj) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(file); PrintWriter writer = new PrintWriter(fos)) {
+            writer.println(gson.toJson(obj));
+        }
     }
 
 }
