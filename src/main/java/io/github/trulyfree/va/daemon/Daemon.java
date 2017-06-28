@@ -65,12 +65,31 @@ public final class Daemon {
         return instance.get();
     }
 
+    /**
+     * Non-blocking method to get the daemon instance. This may return null.
+     *
+     * @return daemon The daemon instance as of right now.
+     */
+    public static Daemon getInstanceNow() {
+        return instance.get();
+    }
+
+    /**
+     * Non-blocking method to check if a daemon exists. This should only be used for existence-checking. Otherwise,
+     * use getInstanceNow and check for null.
+     *
+     * @return hasInstance Whether or not the instance exists.
+     */
     public static boolean hasInstance() {
         return latch.get().getCount() == 0;
     }
 
+    /**
+     * Delete the current daemon instance and reset the latch.
+     */
     public static void deleteInstance() {
         latch.set(new CountDownLatch(1));
+        instance.set(null);
     }
 
     /**
@@ -79,6 +98,7 @@ public final class Daemon {
      *
      * @param commands The list of commands to execute, in order of execution.
      */
+    @SuppressWarnings("unused")
     public void submitCommands(List<String> commands) {
         final List<String> actual = Collections.unmodifiableList(commands);
         commandHandler.submit(new Runnable() {

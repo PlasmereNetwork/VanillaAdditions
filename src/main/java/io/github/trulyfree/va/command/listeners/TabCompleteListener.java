@@ -2,8 +2,10 @@ package io.github.trulyfree.va.command.listeners;
 
 import io.github.trulyfree.va.command.CommandAdjuster;
 import io.github.trulyfree.va.command.commands.TabbableCommand;
+import lombok.NonNull;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.Connection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.event.TabCompleteResponseEvent;
 import net.md_5.bungee.api.plugin.Command;
@@ -46,7 +48,7 @@ public class TabCompleteListener implements Listener {
      * @param adjuster The adjuster which owns this listener.
      */
     @SuppressWarnings("unchecked")
-    public TabCompleteListener(CommandAdjuster adjuster) {
+    public TabCompleteListener(@NonNull CommandAdjuster adjuster) {
         this.adjuster = adjuster;
         this.awaitingSuggestions = new ConcurrentHashMap<>();
         PluginManager manager = adjuster.getPlugin().getProxy().getPluginManager();
@@ -64,25 +66,26 @@ public class TabCompleteListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onTabComplete(TabCompleteEvent event) {
-        if (commandMap == null) {
+        if (commandMap == null || !(event.getSender() instanceof ProxiedPlayer)) {
             return;
         }
         String cursor = event.getCursor();
+        ProxiedPlayer player = (ProxiedPlayer) event.getSender();
         if (cursor.startsWith("/")) {
             int firstSpace = cursor.indexOf(' ');
             if (firstSpace == -1) {
                 List<String> awaitingSuggestionResponses = new ArrayList<>();
                 String commandStringStart = cursor.substring(1);
                 for (Map.Entry<String, Command> entry : commandMap.entrySet()) {
-                    if (ProxyServer.getInstance().getDisabledCommands().contains(entry.getKey())) {
-                        continue;
-                    }
-                    if (entry.getValue().getName().startsWith(commandStringStart)) {
-                        awaitingSuggestionResponses.add("/" + entry.getValue().getName());
-                    }
-                    for (String alias : entry.getValue().getAliases()) {
-                        if (alias.startsWith(commandStringStart)) {
-                            awaitingSuggestionResponses.add("/" + alias);
+                    if (!ProxyServer.getInstance().getDisabledCommands().contains(entry.getKey())
+                            && player.hasPermission(entry.getValue().getPermission())) {
+                        if (entry.getValue().getName().startsWith(commandStringStart)) {
+                            awaitingSuggestionResponses.add("/" + entry.getValue().getName());
+                        }
+                        for (String alias : entry.getValue().getAliases()) {
+                            if (alias.startsWith(commandStringStart)) {
+                                awaitingSuggestionResponses.add("/" + alias);
+                            }
                         }
                     }
                 }

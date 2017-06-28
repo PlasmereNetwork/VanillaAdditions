@@ -74,7 +74,7 @@ public class ConfigHandler {
      * Save an object to a specific configuration file.
      *
      * @param configName The name of the config to look for in the data folder.
-     * @param obj The object to save.
+     * @param obj        The object to save.
      * @throws IOException If the file cannot be saved.
      */
     @SuppressWarnings("unused")
@@ -86,7 +86,7 @@ public class ConfigHandler {
      * Save an object to a specific configuration file.
      *
      * @param file The file instance of the config file to write to.
-     * @param obj The object to save.
+     * @param obj  The object to save.
      * @throws IOException If the file cannot be saved.
      */
     private void saveConfig(File file, Object obj) throws IOException {

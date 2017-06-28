@@ -19,7 +19,7 @@ public class DaemonAdjuster implements Adjuster {
      * The listener associated with this DaemonAdjuster.
      */
     @Getter
-    private DaemonJoinListener listener;
+    private DaemonEventListener listener;
 
     /**
      * Standard constructor for the DaemonAdjuster.
@@ -28,13 +28,13 @@ public class DaemonAdjuster implements Adjuster {
      */
     public DaemonAdjuster(@NonNull VanillaAdditionsPlugin plugin) {
         this.plugin = plugin;
-        this.listener = new DaemonJoinListener(this);
+        this.listener = new DaemonEventListener(this);
     }
 
     @Override
     public void applyAdjustments() {
         try {
-            listener.setDaemonConnectionCheck(plugin.getConfigHandler().getConfig("daemon.json", DaemonJoinListener.ConnectionCheck.class));
+            listener.setDaemonConnectionCheck(plugin.getConfigHandler().getConfig("daemon.json", DaemonEventListener.ConnectionCheck.class));
         } catch (IOException e) {
             e.printStackTrace();
         }

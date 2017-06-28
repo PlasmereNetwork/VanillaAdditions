@@ -1,9 +1,11 @@
 package io.github.trulyfree.va.daemon;
 
+import io.github.trulyfree.va.events.DaemonChatEvent;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.Value;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
@@ -12,7 +14,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
 @SuppressWarnings("deprecation")
-public class DaemonJoinListener implements Listener {
+public class DaemonEventListener implements Listener {
 
     /**
      * The adjuster which owns this DaemonJoinListener.
@@ -30,7 +32,7 @@ public class DaemonJoinListener implements Listener {
      *
      * @param adjuster The adjuster which owns this DaemonJoinListener.
      */
-    DaemonJoinListener(DaemonAdjuster adjuster) {
+    DaemonEventListener(DaemonAdjuster adjuster) {
         this.adjuster = adjuster;
     }
 
@@ -56,10 +58,18 @@ public class DaemonJoinListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    @SneakyThrows
     public void onPlayerDisconnectEvent(PlayerDisconnectEvent event) {
-        if (Daemon.hasInstance() && event.getPlayer().equals(Daemon.getInstance().getPlayer())) {
+        Daemon daemon = Daemon.getInstanceNow();
+        if (daemon != null && event.getPlayer().equals(daemon.getPlayer())) {
             Daemon.deleteInstance();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onChatEvent(ChatEvent event) {
+        Daemon daemon = Daemon.getInstanceNow();
+        if (daemon != null && event.getSender().equals(daemon.getPlayer())) {
+            ProxyServer.getInstance().getPluginManager().callEvent(new DaemonChatEvent(event));
         }
     }
 
