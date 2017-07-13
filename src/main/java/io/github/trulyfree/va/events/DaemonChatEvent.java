@@ -1,15 +1,13 @@
 package io.github.trulyfree.va.events;
 
-import net.md_5.bungee.api.event.ChatEvent;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+import net.md_5.bungee.api.plugin.Event;
 
-public class DaemonChatEvent extends ChatEvent {
-    public DaemonChatEvent(ChatEvent event) {
-        super(event.getSender(), event.getReceiver(), event.getMessage());
-        event.setCancelled(true);
-    }
+@EqualsAndHashCode(callSuper = true)
+@Value
+public class DaemonChatEvent extends Event {
 
-    @Override
-    public boolean isCancelled() {
-        return true;
-    }
+    String message;
+
 }

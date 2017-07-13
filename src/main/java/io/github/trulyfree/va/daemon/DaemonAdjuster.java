@@ -21,6 +21,9 @@ public class DaemonAdjuster implements Adjuster {
     @Getter
     private DaemonEventListener listener;
 
+    @Getter
+    private DaemonOptions options;
+
     /**
      * Standard constructor for the DaemonAdjuster.
      *
@@ -34,11 +37,13 @@ public class DaemonAdjuster implements Adjuster {
     @Override
     public void applyAdjustments() {
         try {
-            listener.setDaemonConnectionCheck(plugin.getConfigHandler().getConfig("daemon.json", DaemonEventListener.ConnectionCheck.class));
+            options = plugin.getConfigHandler().getConfig("daemon.json", DaemonOptions.class);
+            plugin.getProxy().getPluginManager().registerListener(plugin, listener);
+            ProcessBuilder processBuilder = new ProcessBuilder(options.getScript()).directory(plugin.getDataFolder());
+            Daemon.spawn(processBuilder);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        plugin.getProxy().getPluginManager().registerListener(plugin, listener);
     }
 
     @Override

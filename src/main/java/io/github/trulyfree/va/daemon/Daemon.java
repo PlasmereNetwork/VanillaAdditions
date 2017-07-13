@@ -1,13 +1,19 @@
 package io.github.trulyfree.va.daemon;
 
+import io.github.trulyfree.va.events.DaemonChatEvent;
 import lombok.Getter;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class Daemon {
@@ -21,6 +27,16 @@ public final class Daemon {
      * The instance of the daemon. This is held in an atomic reference to ensure thread sanity.
      */
     private static final AtomicReference<Daemon> instance = new AtomicReference<>();
+
+    /**
+     * The process associated with the Daemon instance.
+     */
+    private static final AtomicReference<Process> process = new AtomicReference<>();
+
+    /**
+     * ExecutorService handling the output of the child daemon process.
+     */
+    private static final AtomicReference<ExecutorService> executor = new AtomicReference<>();
 
     /**
      * The player instance which will be used as the daemon.
@@ -49,7 +65,7 @@ public final class Daemon {
      *
      * @param player The player to be used by this daemon instance.
      */
-    public static void makeInstance(ProxiedPlayer player) {
+    static void makeInstance(ProxiedPlayer player) {
         instance.set(new Daemon(player));
         latch.get().countDown();
     }
@@ -60,6 +76,7 @@ public final class Daemon {
      * @return daemon The daemon instance.
      * @throws InterruptedException If the thread waiting for the daemon is interrupted.
      */
+    @SuppressWarnings("unused")
     public static Daemon getInstance() throws InterruptedException {
         latch.get().await();
         return instance.get();
@@ -70,7 +87,7 @@ public final class Daemon {
      *
      * @return daemon The daemon instance as of right now.
      */
-    public static Daemon getInstanceNow() {
+    static Daemon getInstanceNow() {
         return instance.get();
     }
 
@@ -87,9 +104,94 @@ public final class Daemon {
     /**
      * Delete the current daemon instance and reset the latch.
      */
-    public static void deleteInstance() {
+    static void deleteInstance() {
         latch.set(new CountDownLatch(1));
         instance.set(null);
+    }
+
+    static void spawn(final ProcessBuilder builder) throws IOException {
+        if (executor.get() != null && !executor.get().isShutdown()) {
+            return;
+        }
+        final ExecutorService executor = Executors.newFixedThreadPool(3);
+        final AtomicBoolean shouldContinue = new AtomicBoolean(true);
+        final AtomicReference<CountDownLatch> latch = new AtomicReference<>(new CountDownLatch(1));
+        final AtomicReference<CountDownLatch> check = new AtomicReference<>(new CountDownLatch(2));
+        final AtomicReference<BufferedReader> output = new AtomicReference<>();
+        final AtomicReference<BufferedReader> error = new AtomicReference<>();
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                while (shouldContinue.get()) {
+                    try {
+                        latch.get().await();
+                        check.get().countDown();
+                    } catch (InterruptedException ignored) {
+                    }
+                    try {
+                        for (String line; (line = output.get().readLine()) != null; ) {
+                            ProxyServer.getInstance().getPluginManager().callEvent(new DaemonChatEvent(line));
+                        }
+                    } catch (IOException ignored) {
+                    }
+                }
+            }
+        });
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                while (shouldContinue.get()) {
+                    try {
+                        latch.get().await();
+                        check.get().countDown();
+                        if (!shouldContinue.get()) {
+                            break;
+                        }
+                    } catch (InterruptedException ignored) {
+                    }
+                    try {
+                        for (String line; (line = error.get().readLine()) != null; ) {
+                            ProxyServer.getInstance().getLogger().warning(line);
+                        }
+                    } catch (IOException ignored) {
+                    }
+                }
+            }
+        });
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                do {
+                    long startup = System.currentTimeMillis();
+                    try {
+                        process.set(builder.start());
+                        output.set(new BufferedReader(new InputStreamReader(process.get().getInputStream())));
+                        error.set(new BufferedReader(new InputStreamReader(process.get().getErrorStream())));
+                        latch.get().countDown();
+                    } catch (IOException e) {
+                        break;
+                    }
+                    if (Thread.interrupted()) {
+                        break;
+                    }
+                    try {
+                        check.get().await();
+                        latch.set(new CountDownLatch(1));
+                        process.get().waitFor();
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                    if (System.currentTimeMillis() - startup < 10 * 1000) {
+                        ProxyServer.getInstance().getLogger().severe("Daemon process lasted less than 10 seconds, killing...");
+                        executor.shutdownNow();
+                        break;
+                    }
+                } while (!Thread.interrupted());
+                process.get().destroy();
+                shouldContinue.set(false);
+                latch.get().countDown();
+            }
+        });
     }
 
     /**
@@ -110,5 +212,4 @@ public final class Daemon {
             }
         });
     }
-
 }
