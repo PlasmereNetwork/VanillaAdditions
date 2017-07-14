@@ -87,7 +87,7 @@ public final class Daemon {
      *
      * @return daemon The daemon instance as of right now.
      */
-    static Daemon getInstanceNow() {
+    public static Daemon getInstanceNow() {
         return instance.get();
     }
 
