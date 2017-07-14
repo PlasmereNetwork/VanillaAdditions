@@ -48,6 +48,7 @@ public class DaemonAdjuster implements Adjuster {
 
     @Override
     public void removeAdjustments() {
+        Daemon.kill();
         plugin.getProxy().getPluginManager().unregisterListener(listener);
     }
 }

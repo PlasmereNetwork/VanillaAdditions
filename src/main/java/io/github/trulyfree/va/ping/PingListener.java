@@ -21,7 +21,7 @@ public class PingListener implements Listener {
     public void onProxyPingEvent(ProxyPingEvent event) {
         if (Daemon.hasInstance()) {
             Players players = event.getResponse().getPlayers();
-            players.setOnline(players.getOnline() - 1);
+            Players changed = new Players(players.getMax() - 1, players.getOnline() - 1, players.getSample());
         }
     }
 

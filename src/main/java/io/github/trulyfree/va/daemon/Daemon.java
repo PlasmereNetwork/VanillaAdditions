@@ -194,6 +194,10 @@ public final class Daemon {
         });
     }
 
+    static void kill() {
+        executor.get().shutdownNow();
+    }
+
     /**
      * Submits a list of commands to execute, in player chat notation. These will be executed serverside, so you cannot
      * use commands that are only known by the BungeeCord instance.
