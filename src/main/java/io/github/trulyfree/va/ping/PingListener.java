@@ -20,19 +20,22 @@ public class PingListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onProxyPingEvent(ProxyPingEvent event) {
         if (Daemon.hasInstance()) {
             ServerPing original = event.getResponse();
             Players players = original.getPlayers();
             ServerPing.PlayerInfo[] sample = players.getSample();
-            ArrayList<ServerPing.PlayerInfo> sampleReplacement = new ArrayList<>(sample.length - 1);
-            for (ServerPing.PlayerInfo item : sample) {
-                if (!item.getName().equals(Daemon.getInstanceNow().getPlayer().getName())) {
-                    sampleReplacement.add(item);
+            if (sample != null) {
+                ArrayList<ServerPing.PlayerInfo> sampleReplacement = new ArrayList<>(sample.length - 1);
+                for (ServerPing.PlayerInfo item : sample) {
+                    if (!item.getName().equals(Daemon.getInstanceNow().getPlayer().getName())) {
+                        sampleReplacement.add(item);
+                    }
                 }
+                sample = sampleReplacement.toArray(new ServerPing.PlayerInfo[sample.length - 1]);
             }
-            Players changed = new Players(players.getMax() - 1, players.getOnline() - 1, sampleReplacement.toArray(new ServerPing.PlayerInfo[sample.length - 1]));
+            Players changed = new Players(players.getMax() - 1, players.getOnline() - 1, sample);
             original.setPlayers(changed);
         }
     }
