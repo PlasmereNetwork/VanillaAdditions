@@ -77,13 +77,12 @@ public class TabCompleteListener implements Listener {
                 List<String> awaitingSuggestionResponses = new ArrayList<>();
                 String commandStringStart = cursor.substring(1);
                 for (Map.Entry<String, Command> entry : commandMap.entrySet()) {
-                    if (!ProxyServer.getInstance().getDisabledCommands().contains(entry.getKey())
-                            && player.hasPermission(entry.getValue().getPermission())) {
-                        if (entry.getValue().getName().startsWith(commandStringStart)) {
+                    if (!ProxyServer.getInstance().getDisabledCommands().contains(entry.getKey())) {
+                        if (entry.getValue().getName().startsWith(commandStringStart) && !awaitingSuggestionResponses.contains(entry.getValue().getName())) {
                             awaitingSuggestionResponses.add("/" + entry.getValue().getName());
                         }
                         for (String alias : entry.getValue().getAliases()) {
-                            if (alias.startsWith(commandStringStart)) {
+                            if (alias.startsWith(commandStringStart) && !awaitingSuggestionResponses.contains(alias)) {
                                 awaitingSuggestionResponses.add("/" + alias);
                             }
                         }
@@ -115,7 +114,6 @@ public class TabCompleteListener implements Listener {
         if (event.getSuggestions().isEmpty()) {
             return;
         }
-
         List<String> awaitingSuggestionResponses = awaitingSuggestions.remove(event.getReceiver());
         if (awaitingSuggestionResponses != null) {
             event.getSuggestions().addAll(awaitingSuggestionResponses);
