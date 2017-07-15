@@ -119,7 +119,11 @@ public class TabCompleteListener implements Listener {
         }
         List<String> awaitingSuggestionResponses = awaitingSuggestions.remove(event.getReceiver());
         if (awaitingSuggestionResponses != null) {
-            event.getSuggestions().addAll(awaitingSuggestionResponses);
+            for (String suggestion : awaitingSuggestionResponses) {
+                if (!event.getSuggestions().contains(suggestion)) {
+                    event.getSuggestions().add(suggestion);
+                }
+            }
         }
     }
 
