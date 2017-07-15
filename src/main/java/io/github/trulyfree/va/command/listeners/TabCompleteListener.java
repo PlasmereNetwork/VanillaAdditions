@@ -78,6 +78,9 @@ public class TabCompleteListener implements Listener {
                 String commandStringStart = cursor.substring(1);
                 for (Map.Entry<String, Command> entry : commandMap.entrySet()) {
                     if (!ProxyServer.getInstance().getDisabledCommands().contains(entry.getKey())) {
+                        if (!player.getPermissions().contains(entry.getValue().getPermission())) {
+                            continue;
+                        }
                         if (entry.getValue().getName().startsWith(commandStringStart) && !awaitingSuggestionResponses.contains(entry.getValue().getName())) {
                             awaitingSuggestionResponses.add("/" + entry.getValue().getName());
                         }
