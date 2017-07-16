@@ -7,6 +7,9 @@ import io.github.trulyfree.va.ping.PingAdjuster;
 import lombok.Getter;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Plugin class for VanillaAdditions.
  */
@@ -32,6 +35,9 @@ public class VanillaAdditionsPlugin extends Plugin {
      * The ping adjuster for this VanillaAdditions instance.
      */
     private PingAdjuster pingAdjuster;
+
+    @Getter
+    private final ExecutorService backgroundExecutor = Executors.newCachedThreadPool();
 
     /**
      * Standard constructor for VanillaAdditions. This will be called when the plugin is loaded.

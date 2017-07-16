@@ -32,18 +32,26 @@ public class DaemonEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPostLoginEvent(PostLoginEvent event) {
-        if (adjuster.getOptions().validate(event.getPlayer().getPendingConnection())) {
-            Daemon.makeInstance(event.getPlayer());
-            adjuster.getPlugin().getLogger().info("Daemon instance assigned to " + event.getPlayer().getName());
-        }
+    public void onPostLoginEvent(final PostLoginEvent event) {
+        adjuster.getPlugin().getBackgroundExecutor().submit(new Runnable() {
+            public void run() {
+                if (adjuster.getOptions().validate(event.getPlayer().getPendingConnection())) {
+                    Daemon.makeInstance(event.getPlayer());
+                    adjuster.getPlugin().getLogger().info(String.format("Daemon instance assigned to %s.", event.getPlayer().getName()));
+                }
+            }
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerDisconnectEvent(PlayerDisconnectEvent event) {
-        Daemon daemon = Daemon.getInstanceNow();
-        if (daemon != null && event.getPlayer().equals(daemon.getPlayer())) {
-            Daemon.deleteInstance();
-        }
+    public void onPlayerDisconnectEvent(final PlayerDisconnectEvent event) {
+        adjuster.getPlugin().getBackgroundExecutor().submit(new Runnable() {
+            public void run() {
+                Daemon daemon = Daemon.getInstanceNow();
+                if (daemon != null && event.getPlayer().equals(daemon.getPlayer())) {
+                    Daemon.deleteInstance();
+                }
+            }
+        });
     }
 }
