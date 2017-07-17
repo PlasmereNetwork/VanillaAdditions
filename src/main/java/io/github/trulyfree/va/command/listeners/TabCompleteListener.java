@@ -87,14 +87,14 @@ public class TabCompleteListener implements Listener {
                 if (player.getPermissions().contains("nonop")) {
                     for (String command : nonOpVanillaCommands) {
                         if (command.startsWith(commandStringStart)) {
-                            event.getSuggestions().add(command);
+                            event.getSuggestions().add("/" + command);
                         }
                     }
                 }
                 if (player.getPermissions().contains("op")) {
                     for (String command : opVanillaCommands) {
                         if (command.startsWith(commandStringStart)) {
-                            event.getSuggestions().add(command);
+                            event.getSuggestions().add("/" + command);
                         }
                     }
                 }
