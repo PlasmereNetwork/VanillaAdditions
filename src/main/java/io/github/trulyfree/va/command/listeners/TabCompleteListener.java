@@ -4,10 +4,8 @@ import io.github.trulyfree.va.command.CommandAdjuster;
 import io.github.trulyfree.va.command.commands.TabbableCommand;
 import lombok.NonNull;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.TabCompleteEvent;
-import net.md_5.bungee.api.event.TabCompleteResponseEvent;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.PluginManager;
@@ -15,10 +13,9 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class TabCompleteListener implements Listener {
 
@@ -30,16 +27,14 @@ public class TabCompleteListener implements Listener {
     private final CommandAdjuster adjuster;
 
     /**
-     * The suggestions that we need to add to the connections upon tab complete response. This allows us to add vanilla
-     * stuff without touching the server.
-     */
-    private final ConcurrentHashMap<Connection, List<String>> awaitingSuggestions;
-
-    /**
      * A reference to the proxy's command map. This is reflectively captured from ProxyConfig, and is bound to change
      * between BungeeCord versions.
      */
     private final Map<String, Command> commandMap;
+
+    private final List<String> nonOpVanillaCommands = Arrays.asList("help", "list", "me", "msg", "tell", "w");
+
+    private final List<String> opVanillaCommands = Arrays.asList("advancement", "ban", "banlist", "blockdata", "clear", "clone", "debug", "defaultgamemode", "deop", "difficulty", "effect", "enchant", "entitydata", "execute", "fill", "function", "gamemode", "gamerule", "give", "kick", "kill", "locate", "op", "pardon", "particle", "playsound", "reload", "replaceitem", "save-all", "save-off", "say", "scoreboard", "seed", "setblock", "setidletimeout", "setmaxplayers", "setworldspawn", "spawnpoint", "spreadplayers", "stats", "stop", "stopsound", "summon", "teleport", "tellraw", "testfor", "testforblock", "testforblocks", "time", "title", "toggledownfall", "tp", "trigger", "weather", "whitelist", "worldborder", "xp");
 
     /**
      * Standard constructor for TabCompleteListener. Note that the proxy config's command map will be reflectively
@@ -50,7 +45,6 @@ public class TabCompleteListener implements Listener {
     @SuppressWarnings("unchecked")
     public TabCompleteListener(@NonNull CommandAdjuster adjuster) {
         this.adjuster = adjuster;
-        this.awaitingSuggestions = new ConcurrentHashMap<>();
         PluginManager manager = adjuster.getPlugin().getProxy().getPluginManager();
         Map<String, Command> commandMap;
         try {
@@ -74,24 +68,36 @@ public class TabCompleteListener implements Listener {
         if (cursor.startsWith("/")) {
             int firstSpace = cursor.indexOf(' ');
             if (firstSpace == -1) {
-                List<String> awaitingSuggestionResponses = new ArrayList<>();
                 String commandStringStart = cursor.substring(1);
                 for (Map.Entry<String, Command> entry : commandMap.entrySet()) {
                     if (!ProxyServer.getInstance().getDisabledCommands().contains(entry.getKey())) {
                         if (!player.getPermissions().contains(entry.getValue().getPermission())) {
                             continue;
                         }
-                        if (entry.getValue().getName().startsWith(commandStringStart) && !awaitingSuggestionResponses.contains(entry.getValue().getName())) {
-                            awaitingSuggestionResponses.add("/" + entry.getValue().getName());
+                        if (entry.getValue().getName().startsWith(commandStringStart) && !event.getSuggestions().contains(entry.getValue().getName())) {
+                            event.getSuggestions().add("/" + entry.getValue().getName());
                         }
                         for (String alias : entry.getValue().getAliases()) {
-                            if (alias.startsWith(commandStringStart) && !awaitingSuggestionResponses.contains(alias)) {
-                                awaitingSuggestionResponses.add("/" + alias);
+                            if (alias.startsWith(commandStringStart) && !event.getSuggestions().contains(alias)) {
+                                event.getSuggestions().add("/" + alias);
                             }
                         }
                     }
                 }
-                awaitingSuggestions.put(event.getSender(), awaitingSuggestionResponses);
+                if (player.getPermissions().contains("nonop")) {
+                    for (String command : nonOpVanillaCommands) {
+                        if (command.startsWith(commandStringStart)) {
+                            event.getSuggestions().add(command);
+                        }
+                    }
+                }
+                if (player.getPermissions().contains("op")) {
+                    for (String command : opVanillaCommands) {
+                        if (command.startsWith(commandStringStart)) {
+                            event.getSuggestions().add(command);
+                        }
+                    }
+                }
             } else {
                 String commandString = cursor.substring(1, firstSpace);
                 for (Command command : commandMap.values()) {
@@ -107,21 +113,6 @@ public class TabCompleteListener implements Listener {
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onTabCompleteResponse(TabCompleteResponseEvent event) {
-        if (event.getSuggestions().isEmpty()) {
-            return;
-        }
-        List<String> awaitingSuggestionResponses = awaitingSuggestions.remove(event.getReceiver());
-        if (awaitingSuggestionResponses != null) {
-            for (String suggestion : awaitingSuggestionResponses) {
-                if (!event.getSuggestions().contains(suggestion)) {
-                    event.getSuggestions().add(suggestion);
                 }
             }
         }
