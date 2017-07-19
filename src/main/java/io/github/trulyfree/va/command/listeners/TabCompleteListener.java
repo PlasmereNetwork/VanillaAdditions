@@ -77,11 +77,6 @@ public class TabCompleteListener implements Listener {
                         if (entry.getValue().getName().startsWith(commandStringStart) && !event.getSuggestions().contains(entry.getValue().getName())) {
                             event.getSuggestions().add("/" + entry.getValue().getName());
                         }
-                        for (String alias : entry.getValue().getAliases()) {
-                            if (alias.startsWith(commandStringStart) && !event.getSuggestions().contains(alias)) {
-                                event.getSuggestions().add("/" + alias);
-                            }
-                        }
                     }
                 }
                 if (player.getPermissions().contains("nonop")) {
