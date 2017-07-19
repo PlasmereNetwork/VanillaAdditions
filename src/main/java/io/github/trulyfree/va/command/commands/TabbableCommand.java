@@ -1,5 +1,6 @@
 package io.github.trulyfree.va.command.commands;
 
+import io.github.trulyfree.va.command.listeners.TabCompleteListener;
 import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -12,11 +13,13 @@ public abstract class TabbableCommand extends Command {
     // See Command's constructors.
     public TabbableCommand(String name) {
         super(name);
+        TabCompleteListener.addCommand(this);
     }
 
     // See Command's constructors.
     public TabbableCommand(String name, String permission, String... aliases) {
         super(name, permission, aliases);
+        TabCompleteListener.addCommand(this);
     }
 
     /**

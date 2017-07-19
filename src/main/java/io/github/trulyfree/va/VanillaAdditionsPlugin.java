@@ -20,24 +20,20 @@ public class VanillaAdditionsPlugin extends Plugin {
      */
     @Getter
     private final ConfigHandler configHandler;
-
+    @Getter
+    private final ExecutorService backgroundExecutor = Executors.newCachedThreadPool();
     /**
      * The command adjuster for this VanillaAdditions instance.
      */
     private CommandAdjuster commandAdjuster;
-
     /**
      * The daemon adjuster for this VanillaAdditions instance.
      */
     private DaemonAdjuster daemonAdjuster;
-
     /**
      * The ping adjuster for this VanillaAdditions instance.
      */
     private PingAdjuster pingAdjuster;
-
-    @Getter
-    private final ExecutorService backgroundExecutor = Executors.newCachedThreadPool();
 
     /**
      * Standard constructor for VanillaAdditions. This will be called when the plugin is loaded.
