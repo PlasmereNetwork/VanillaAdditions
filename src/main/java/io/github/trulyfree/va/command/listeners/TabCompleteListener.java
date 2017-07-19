@@ -53,7 +53,7 @@ public class TabCompleteListener implements Listener {
             if (firstSpace == -1) {
                 String commandStringStart = cursor.substring(1);
                 for (TabbableCommand entry : addedCommands) {
-                    if (!ProxyServer.getInstance().getDisabledCommands().contains(entry)) {
+                    if (!ProxyServer.getInstance().getDisabledCommands().contains(entry.getName())) {
                         if (!player.getPermissions().contains(entry.getPermission())) {
                             continue;
                         }
